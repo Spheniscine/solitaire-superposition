@@ -88,6 +88,7 @@ pub enum AnimationAct {
 pub struct Board {
     pub depots: Vec<Vec<Card>>,
     pub selected: Option<BoardPos>,
+    pub num_splits_remaining: i8,
     pub animation_acts: Vec<AnimationAct>,
 }
 
@@ -96,6 +97,7 @@ impl Board {
         Self {
             depots: vec![vec![]; NUM_DEPOTS],
             selected: None,
+            num_splits_remaining: 4,
             animation_acts: vec![],
         }
     }
@@ -135,11 +137,13 @@ impl Board {
             self.depots[pos.depot_index][pos.card_index].tapped = true;
             let card = self.depots[pos.depot_index][pos.card_index];
             
-            self.animation_acts.push(AnimationAct::Split { card, pos, undo })
+            self.animation_acts.push(AnimationAct::Split { card, pos, undo });
+            self.num_splits_remaining -= 1;
         } else {
             let card = self.depots[DepotRole::Superpositor.id(0)].pop().unwrap();
 
-            self.animation_acts.push(AnimationAct::Split { card, pos, undo })
+            self.animation_acts.push(AnimationAct::Split { card, pos, undo });
+            self.num_splits_remaining += 1;
         }
     }
 
