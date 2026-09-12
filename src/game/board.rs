@@ -143,7 +143,6 @@ impl Board {
             let card = self.depots[DepotRole::Superpositor.id(0)].pop().unwrap();
 
             self.animation_acts.push(AnimationAct::Split { card, pos, undo });
-            self.num_splits_remaining += 1;
         }
     }
 
@@ -158,6 +157,7 @@ impl Board {
                         self.depots[DepotRole::Superpositor.id(0)].push(card);
                     } else {
                         self.depots[pos.depot_index][pos.card_index].tapped = false;
+                        self.num_splits_remaining += 1;
                     }
                 },
             }
