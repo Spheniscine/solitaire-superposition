@@ -39,6 +39,7 @@ pub enum SuitSkin {
     Traditional,
 }
 
+pub const SYMBOLS_2_FONT_STR: &str = "'Noto Sans Symbols 2'";
 pub const KATEX_SUITS_FONT_STR: &str = "KaTeX_Suits";
 
 impl SuitSkin {
@@ -74,7 +75,7 @@ impl SuitSkin {
     pub fn font(self) -> &'static str {
         match self {
             SuitSkin::Animals => "'Noto Color Emoji'",
-            SuitSkin::Shapes => "'Noto Sans Symbols 2'",
+            SuitSkin::Shapes => SYMBOLS_2_FONT_STR,
             SuitSkin::Traditional => KATEX_SUITS_FONT_STR, // links to custom version of Katex/MLModern that has filled card suits
         }
     }

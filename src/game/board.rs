@@ -5,7 +5,7 @@ use serde_tuple::{Deserialize_tuple, Serialize_tuple};
 use strum::{IntoEnumIterator, VariantArray};
 use strum_macros::{EnumIter, VariantArray};
 
-use crate::game::NUM_SUITS;
+use crate::game::{Card, DECK_SIZE, NUM_SUITS};
 
 #[derive(Copy, Clone, Serialize, Deserialize, Debug, PartialEq, Eq, EnumIter, VariantArray)]
 #[repr(u8)]
@@ -75,5 +75,97 @@ pub struct BoardPos {
 impl BoardPos {
     pub fn new(depot_index: usize, card_index: usize) -> Self {
         Self { depot_index, card_index }
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
+pub enum AnimationAct {
+    Move { cards: Vec<Card>, pos1: BoardPos, pos2: BoardPos },
+    Split { card: Card, pos: BoardPos, undo: bool },
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
+pub struct Board {
+    pub depots: Vec<Vec<Card>>,
+    pub selected: Option<BoardPos>,
+    pub animation_acts: Vec<AnimationAct>,
+}
+
+impl Board {
+    pub fn empty() -> Self {
+        Self {
+            depots: vec![vec![]; NUM_DEPOTS],
+            selected: None,
+            animation_acts: vec![],
+        }
+    }
+
+    pub fn from_deal(deal: &[Card]) -> Self {
+        use DepotRole::*;
+        assert_eq!(deal.len(), DECK_SIZE);
+
+        let mut res = Self::empty();
+        for (&card, depot) in deal.iter().zip(std::iter::repeat(Tableau.range()).flatten()) {
+            res.depots[depot].push(card);
+        }
+
+        res
+    }
+
+    pub fn do_move(&mut self, pos1: BoardPos, pos2: BoardPos) {
+        self.selected = None;
+        let cards = self.depots[pos1.depot_index].drain(pos1.card_index ..).collect::<Vec<_>>();
+        self.animation_acts.push(
+            AnimationAct::Move { 
+                cards, pos1, pos2
+            }
+        );
+    }
+
+    pub fn reset_selection(&mut self) {
+        self.selected = None;
+        if !self.depots[DepotRole::Superpositor.id(0)].is_empty() {
+            self.selected = Some(BoardPos::new(DepotRole::Superpositor.id(0), 0));
+        }
+    }
+
+    pub fn do_split(&mut self, pos: BoardPos, undo: bool) {
+        self.selected = None;
+        if !undo {
+            self.depots[pos.depot_index][pos.card_index].tapped = true;
+            let card = self.depots[pos.depot_index][pos.card_index];
+            
+            self.animation_acts.push(AnimationAct::Split { card, pos, undo })
+        } else {
+            let card = self.depots[DepotRole::Superpositor.id(0)].pop().unwrap();
+
+            self.animation_acts.push(AnimationAct::Split { card, pos, undo })
+        }
+    }
+
+    pub fn advance_actions(&mut self) {
+        for act in self.animation_acts.drain(..) {
+            match act {
+                AnimationAct::Move { cards, pos2, .. } => {
+                    self.depots[pos2.depot_index].extend(cards);
+                },
+                AnimationAct::Split { card, pos, undo } => {
+                    if !undo {
+                        self.depots[DepotRole::Superpositor.id(0)].push(card);
+                    } else {
+                        self.depots[pos.depot_index][pos.card_index].tapped = false;
+                    }
+                },
+            }
+        }
+        self.reset_selection();
+    }
+
+    pub fn top_pos(&self, depot: usize) -> BoardPos {
+        BoardPos::new(depot, self.depots[depot].len())
+    }
+
+    pub fn last_pos(&self, depot: usize) -> BoardPos {
+        BoardPos::new(depot, self.depots[depot].len().wrapping_sub(1))
     }
 }
