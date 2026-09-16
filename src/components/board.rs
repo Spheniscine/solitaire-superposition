@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use glam::Vec2;
+use math_macro::math;
 
 use crate::{components::{CARD_BORDER_RADIUS_RATIO, CARD_HEIGHT_RATIO, CardComponent, CardFrame, SkinTrait, rem}, game::{AnimationKey, Board, BoardPos, Card, DepotRole, NUM_DEPOTS, Skin, Suit}};
 
@@ -8,8 +9,7 @@ use crate::{components::{CARD_BORDER_RADIUS_RATIO, CARD_HEIGHT_RATIO, CardCompon
 pub fn Ket() -> Element {
     rsx! {
         span {
-            // |\phi\rangle
-            dangerous_inner_html: include_str!("../includes/ket.html")
+            dangerous_inner_html: math!(r"|\phi\rangle"),
         }
     }
 }
@@ -77,8 +77,7 @@ pub fn BoardComponent(
                 div {
                     font_size: "0.9em",
                     position: "relative",
-                    top: "0.07em",
-                    left: "0.05em",
+                    left: "0.04em",
                     Ket{}
                 }
             }),
