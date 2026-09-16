@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use glam::Vec2;
 use math_macro::math;
 
-use crate::{components::{CARD_BORDER_RADIUS_RATIO, CARD_HEIGHT_RATIO, CardComponent, CardFrame, SkinTrait, rem}, game::{AnimationKey, Board, BoardPos, Card, DepotRole, NUM_DEPOTS, Skin, Suit}};
+use crate::{components::{CARD_BORDER_RADIUS_RATIO, CARD_HEIGHT_RATIO, CardComponent, CardFrame, EMOJI_MAP, SkinTrait, rem}, game::{AnimationKey, Board, BoardPos, Card, DepotRole, NUM_DEPOTS, Skin, Suit}};
 
 // symbol used for superpositor
 #[component]
@@ -25,6 +25,12 @@ pub fn BoardComponent(
     ondoubleclick: EventHandler<BoardPos>,
     #[props(default)]
     oncontextmenu: EventHandler<BoardPos>,
+
+    #[props(default)]
+    onclick_auto_play: EventHandler<()>,
+    #[props(default)]
+    auto_play: bool,
+
     #[props(default)]
     animation_key: AnimationKey,
     #[props(default)]
@@ -104,11 +110,29 @@ pub fn BoardComponent(
         card_height + column_card_offset.y * d as f32
     } else {0.};
 
+    let auto_play_button = {
+        let pos = Vec2::new(
+            pos_x(7),
+            pos_y(0) + card_height + (spacer_y - button_width) / 2.
+        );
+
+        rsx! {
+            img { 
+                style: "width: {rem(button_width)}; position: absolute; left: {rem(pos.x)}; top: {rem(pos.y)}",
+                class: if auto_play {"selected-halo"},
+                onclick: move |_| {onclick_auto_play.call(())},
+                src: EMOJI_MAP["⏫"]
+            }
+        }
+    };
+
     rsx! {
         div {
             position: "absolute",
             top: rem(position.y),
             left: rem(position.x),
+
+            {auto_play_button}
 
             for depot in 0..NUM_DEPOTS {
                 if let Some(hint) = get_hint(depot) {
