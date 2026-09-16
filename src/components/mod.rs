@@ -10,8 +10,8 @@ mod skin;
 mod board;
 pub use board::*;
 
-// mod anim;
-// pub use anim::*;
+mod anim;
+pub use anim::*;
 
 mod hero;
 pub use hero::*;
