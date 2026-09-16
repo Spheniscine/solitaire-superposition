@@ -259,6 +259,28 @@ impl GameState {
         }
     }
 
+    pub fn ondoubleclick(&mut self, pos: BoardPos) {
+        if self.is_busy() { return; }
+        if !self.can_select(pos) { return; } // needed, or illegal stacks can still be moved this way!
+
+        let depot = &self.board.depots[pos.depot_index];
+        let num_moved = depot.len() - pos.card_index;
+        if num_moved != 1 { return; }
+
+        self.try_sort(pos);
+    }
+
+    pub fn oncontextmenu(&mut self, pos: BoardPos) {
+        if self.is_busy() { return; }
+        if !self.can_select(pos) { return; } // needed, or illegal stacks can still be moved this way!
+
+        let depot = &self.board.depots[pos.depot_index];
+        let num_moved = depot.len() - pos.card_index;
+        if num_moved != 1 { return; }
+
+        self.move_intent(pos, self.board.top_pos(DepotRole::Superpositor.id(0)));
+    }
+
     pub fn check_auto_moves(&mut self) {
         if self.is_busy() { return; }
         if self.is_over() { return; }
