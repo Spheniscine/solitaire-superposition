@@ -107,6 +107,8 @@ pub fn Hero() -> Element {
                     onclick: move |pos| if clean {state.write().onclick(pos);},
                     ondoubleclick: move |pos| if clean {state.write().ondoubleclick(pos);},
                     oncontextmenu: move |pos| if clean {state.write().oncontextmenu(pos);},
+                    onclick_auto_play: move |_| state.write().onclick_auto_play(),
+                    auto_play: st.auto_play,
                     animation_key: st.animation_key,
                     is_won: st.is_won(),
                 }

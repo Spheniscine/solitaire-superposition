@@ -261,6 +261,8 @@ impl GameState {
 
     pub fn ondoubleclick(&mut self, pos: BoardPos) {
         if self.is_busy() { return; }
+        if self.is_over() { return; }
+
         if !self.can_select(pos) { return; } // needed, or illegal stacks can still be moved this way!
 
         let depot = &self.board.depots[pos.depot_index];
@@ -272,6 +274,8 @@ impl GameState {
 
     pub fn oncontextmenu(&mut self, pos: BoardPos) {
         if self.is_busy() { return; }
+        if self.is_over() { return; }
+        
         if !self.can_select(pos) { return; } // needed, or illegal stacks can still be moved this way!
 
         let depot = &self.board.depots[pos.depot_index];
@@ -283,7 +287,7 @@ impl GameState {
 
     pub fn check_auto_moves(&mut self) {
         if self.is_busy() { return; }
-        if self.is_over() { return; }
+        if self.is_over() { self.auto_play = false; return; }
         if !self.auto_play { return; }
 
         if let Some(pos) = self.get_next_sort() {
@@ -318,5 +322,10 @@ impl GameState {
         self.undo_stack.clear();
 
         if !self.is_busy() { LocalStorage.save_game_state(&self); }
+    }
+
+    pub fn onclick_auto_play(&mut self) {
+        self.auto_play = !self.auto_play;
+        self.check_auto_moves();
     }
 }
