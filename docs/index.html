@@ -5,14 +5,14 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8" />
-  <link rel="preload" as="script" href="/solitaire-superposition/assets/solitaire-superposition-ffb53c19acc6fc5a.js" crossorigin><link rel="preload" as="fetch" type="application/wasm" href="/solitaire-superposition/assets/solitaire-superposition_bg-cfee40a55491c1ed.wasm" crossorigin></head>
+  <link rel="preload" as="script" href="/solitaire-superposition/assets/solitaire-superposition-ffb53c19acc6fc5a.js" crossorigin><link rel="preload" as="fetch" type="application/wasm" href="/solitaire-superposition/assets/solitaire-superposition_bg-1b47dcd288b52442.wasm" crossorigin></head>
   <body>
     <div id="main"></div>
   <script>
             // We can't use a module script here because we need to start the script immediately when streaming
             import("/solitaire-superposition/assets/solitaire-superposition-ffb53c19acc6fc5a.js").then(
                 ({ default: init }) => {
-                init("/solitaire-superposition/assets/solitaire-superposition_bg-cfee40a55491c1ed.wasm").then((wasm) => {
+                init("/solitaire-superposition/assets/solitaire-superposition_bg-1b47dcd288b52442.wasm").then((wasm) => {
                     if (wasm.__wbindgen_start == undefined) {
                     wasm.main();
                     }

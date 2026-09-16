@@ -279,7 +279,6 @@ impl GameState {
 
     pub fn check_auto_moves(&mut self) {
         if self.is_busy() { return; }
-        if self.is_over() { return; }
         if !self.auto_play { return; }
 
         if let Some(pos) = self.get_next_sort() {
