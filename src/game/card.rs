@@ -1,10 +1,11 @@
 use std::ops::RangeInclusive;
 
+use enum_map::Enum;
 use serde::{Deserialize, Serialize, de::Visitor};
 use strum::EnumCount;
 use strum_macros::{EnumCount, EnumIter};
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, EnumCount, EnumIter)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, EnumCount, EnumIter, Enum)]
 pub enum Suit {
     Clubs, Diamonds, Hearts, Spades
 }

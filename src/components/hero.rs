@@ -1,7 +1,8 @@
+use async_std::stream::StreamExt;
 use dioxus::prelude::*;
 use glam::Vec2;
 
-use crate::{components::BoardComponent, game::{GameState, ScreenState}};
+use crate::{components::BoardComponent, game::{ANIMATION_DURATION, AnimationKey, GameState, ScreenState}};
 
 #[component]
 pub fn Hero() -> Element {
@@ -22,18 +23,18 @@ pub fn Hero() -> Element {
     });
 
     let st = state.read();
-    // let clean = !st.is_busy(); // interactions should test this before write()-ing to state, to prevent slowdowns
+    let clean = !st.is_busy(); // interactions should test this before write()-ing to state, to prevent slowdowns
 
-    // let animate_timer = use_coroutine(move |mut rx: UnboundedReceiver<AnimationKey>| async move {
-    //     while let Some(key) = rx.next().await {
-    //         async_std::task::sleep(ANIMATION_DURATION).await;
-    //         state.write().advance_animations(key);
-    //     }
-    // });
+    let animate_timer = use_coroutine(move |mut rx: UnboundedReceiver<AnimationKey>| async move {
+        while let Some(key) = rx.next().await {
+            async_std::task::sleep(ANIMATION_DURATION).await;
+            state.write().advance_animations(key);
+        }
+    });
 
-    // if st.is_acting() {
-    //     animate_timer.send(st.animation_key);
-    // }
+    if st.is_acting() {
+        animate_timer.send(st.animation_key);
+    }
 
     rsx! {
         div {
@@ -45,11 +46,11 @@ pub fn Hero() -> Element {
                     position: Vec2 { x: 0., y: 20. },
                     board: st.board.clone(),
                     skin: st.skin,
-                    // onclick: move |pos| if clean {state.write().onclick(pos);},
+                    onclick: move |pos| if clean {state.write().onclick(pos);},
                     // ondoubleclick: move |pos| if clean {state.write().ondoubleclick(pos);},
                     // oncontextmenu: move |pos| if clean {state.write().oncontextmenu(pos);},
-                    // animation_key: st.animation_key,
-                    // is_won: st.is_won(),
+                    animation_key: st.animation_key,
+                    is_won: st.is_won(),
                 }
             }
         }
