@@ -4,6 +4,7 @@
 
 html {
     font-size: min(1svw, 0.5625svh);
+    visibility: visible;
 }
 
 .select-none {

@@ -529,6 +529,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "const-css-minify"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb16320721f6441f979feff82c8b4fe789a5423f48e4e724d124211c44be43af"
+
+[[package]]
 name = "const-serialize"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4247,6 +4253,7 @@ name = "solitaire-superposition"
 version = "0.1.0"
 dependencies = [
  "async-std",
+ "const-css-minify",
  "dioxus",
  "enum-map",
  "getrandom 0.4.3",
