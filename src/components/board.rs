@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use glam::Vec2;
 
-use crate::{components::{CARD_HEIGHT_RATIO, SkinTrait}, game::{AnimationKey, Board, BoardPos, Card, DepotRole, Skin, Suit}};
+use crate::{components::{CARD_BORDER_RADIUS_RATIO, CARD_HEIGHT_RATIO, CardComponent, CardFrame, SkinTrait, rem}, game::{AnimationKey, Board, BoardPos, Card, DepotRole, NUM_DEPOTS, Skin, Suit}};
 
 // symbol used for superpositor
 #[component]
@@ -36,9 +36,11 @@ pub fn BoardComponent(
     let spacer_y = 1f32;
     let start_y = 2f32;
 
+    let button_width = 8f32;
+
     let pos_x = {
         let w = 7.;
-        let left = 50. - (w * card_width + (w-1.) * spacer_x) / 2.;
+        let left = 50. - (w * (card_width + spacer_x) + button_width) / 2.;
         move |i: usize| {
             left + (card_width + spacer_x) * i as f32
         }
@@ -48,7 +50,7 @@ pub fn BoardComponent(
         start_y + (card_height + spacer_y) * i as f32
     };
 
-    let superpositor_pos = Vec2::new(pos_x(5).midpoint(pos_x(6)), pos_y(4));
+    let superpositor_pos = Vec2::new(pos_x(5).midpoint(pos_x(6)), pos_y(2) + 6.);
 
     let column_card_offset = Vec2::new(0., 6.);
 
@@ -71,8 +73,20 @@ pub fn BoardComponent(
         match role {
             DepotRole::Tableau => Some(rsx!{}),
             DepotRole::Foundation => Some(skin.render_rank(&Card { rank: 1, suit: Suit::Spades, tapped: false })),
-            DepotRole::Superpositor => Some(rsx!{Ket{}}),
+            DepotRole::Superpositor => Some(rsx!{
+                div {
+                    font_size: "0.9em",
+                    position: "relative",
+                    top: "0.07em",
+                    left: "0.05em",
+                    Ket{}
+                }
+            }),
         }
+    };
+
+    let is_dashed = |depot: usize| {
+        DepotRole::role(depot) == Some(DepotRole::Superpositor)
     };
 
     let selected_height = if let Some(BoardPos { depot_index, card_index }) = board.selected {
@@ -86,6 +100,57 @@ pub fn BoardComponent(
     } else {0.};
 
     rsx! {
+        div {
+            position: "absolute",
+            top: rem(position.y),
+            left: rem(position.x),
 
+            for depot in 0..NUM_DEPOTS {
+                if let Some(hint) = get_hint(depot) {
+                    CardFrame { 
+                        position: get_pos(depot, 0),
+                        width: card_width,
+                        hint,
+                        dashed: is_dashed(depot),
+                        onclick: move |_| {
+                            onclick.call(BoardPos::new(depot, !0))
+                        },
+                    }
+                }
+
+                for i in 0..board.depots[depot].len() {
+                    if board.selected == Some(BoardPos::new(depot, i)) {
+                        div {
+                            position: "absolute",
+                            top: rem(get_pos(depot, i).y),
+                            left: rem(get_pos(depot, i).x),
+                            width: rem(card_width),
+                            height: rem(selected_height),
+                            background_color: "#ff0",
+                            border_radius: rem(card_width * CARD_BORDER_RADIUS_RATIO),
+                            class: "selected-halo",
+                        }
+                    }
+
+                    CardComponent { 
+                        position: get_pos(depot, i),
+                        width: card_width,
+                        card: board.depots[depot][i],
+                        // number_hint: if !is_face_up(depot) {i + 1},
+                        skin,
+                        onclick: move |_| {
+                            onclick.call(BoardPos::new(depot, i))
+                        },
+                        ondoubleclick: move |_| {
+                            ondoubleclick.call(BoardPos::new(depot, i))
+                        },
+                        oncontextmenu: move |ev: Event<MouseData>| {
+                            ev.prevent_default();
+                            oncontextmenu.call(BoardPos::new(depot, i))
+                        },
+                    }
+                }
+            }
+        }
     }
 }

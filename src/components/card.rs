@@ -127,7 +127,7 @@ pub fn CardFrame(
     hint: Option<Element>,
     #[props(default = CARD_FRAME_DEFAULT_COLOR.to_string())] color: String,
     onclick: EventHandler<MouseEvent>,
-    oncontextmenu: EventHandler<MouseEvent>,
+    // oncontextmenu: EventHandler<MouseEvent>,
     #[props(default)] dashed: bool,
 ) -> Element {
     let pt = width / 12.;
@@ -152,7 +152,8 @@ pub fn CardFrame(
             border_radius: pt(1.5),
             font_size: pt(5.),
             padding: pt(0.25),
-            onclick, oncontextmenu,
+            onclick, 
+            //oncontextmenu,
 
             if let Some(hint) = hint {
                 div {

@@ -1,23 +1,50 @@
-/* App-wide styling */
-body {
-    background-color: #0f1116;
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
+* {
+    margin: 0;
 }
 
-#hero {
+html {
+    font-size: min(1svw, 0.5625svh);
+}
+
+.select-none {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+    background-color: #0f1116;
+    font-family: "Noto Sans", sans-serif;
     margin: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    /* disables scrolling */
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    overflow: hidden;
 }
 
-#links {
-    width: 400px;
+#hero {
+    position: relative;
+    background-color: #031;
+    margin: 0;
+    aspect-ratio: 9 / 16;
+    width: 100rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden auto; /* enables scrolling if there are long depots */
+}
+
+/* boilerplate for testing on Dioxus default page */
+/* #links {
+    width: 80rem;
     text-align: left;
-    font-size: x-large;
+
+    font-size: 5rem;
     color: white;
     display: flex;
     flex-direction: column;
@@ -26,11 +53,11 @@ body {
 #links a {
     color: white;
     text-decoration: none;
-    margin-top: 20px;
-    margin: 10px 0px;
-    border: white 1px solid;
-    border-radius: 5px;
-    padding: 10px;
+    margin-top: 4rem;
+    margin: 2rem 0rem;
+    border: white 0.5rem solid;
+    border-radius: 1rem;
+    padding: 2rem;
 }
 
 #links a:hover {
@@ -39,8 +66,99 @@ body {
 }
 
 #header {
-    max-width: 1200px;
+    width: 100rem;
+} */
+
+@keyframes movement {
+    0% {
+        transform: translate(var(--translateX), var(--translateY));
+    }
+    100% {
+        transform: translate(0, 0);
+    }
 }
 
+.selected-halo {
+    box-shadow: 0 0 1rem 1rem #ff0;
+}
 
+#settingsDialog {
+    margin: 2.5%; 
+    padding: 5rem; 
+    width: 85%; 
+    height: 91.5%; 
+    background-color: #ccc; 
+    font-size: 5rem;
+    border-radius: 2rem;
+}
+#settingsDialog:focus { outline: none; }
+#settingsDialog p {
+    margin-top: 3rem; 
+    margin-bottom: 3rem;
+}
+#settingsDialog select {
+    font-size: 5rem; 
+    font-family: 'Noto Sans', sans-serif;
+}
+#settingsDialog input[type="checkbox"] {
+    width: 4rem; 
+    height: 4rem;
+}
+button {
+    width: 20rem; 
+    font-size: 5rem; 
+    font-family: 'Noto Sans', sans-serif;
+}
+#settingsDialog .copyright {
+    position: absolute; 
+    bottom: 1.5rem; 
+    font-size: 3rem;
+}
 
+.game-button {
+    position: absolute; 
+    color: #fff; 
+    text-align: center; 
+    border: 0.5rem solid #00B163; 
+    border-radius: 1rem; 
+    padding: 1rem; 
+    font-size: 4rem; 
+    width: 24rem;
+}
+
+.game-button-disabled {
+    color: #999; 
+    background-color: #777;
+    text-align: center; 
+    border: 0.5rem solid #00B163; 
+    border-radius: 1rem; 
+    padding: 1rem; 
+    font-size: 4rem; 
+    width: 24rem;
+}
+
+.help p {
+    margin-top: 1em;
+}
+
+.help ul, .help ol {
+    padding-left: 2em;
+}
+
+/* .card-pattern-1 {
+    --s: calc(var(--card-width) / 1.3);
+    --c1: #f9537b;
+    --c2: #fb8aa4;
+    --_g: var(--c1) 0% 5%,var(--c2) 6% 15%,var(--c1) 16% 25%,var(--c2) 26% 35%,var(--c1) 36% 45%,var(--c2) 46% 55%,var(--c1) 56% 65%,var(--c2) 66% 75%,var(--c1) 76% 85%,var(--c2) 86% 95%,#0000 96%;
+    background: radial-gradient(50% 50% at 100% 0,var(--_g)),radial-gradient(50% 50% at 0 100%,var(--_g)),radial-gradient(50% 50% at center,var(--_g)),radial-gradient(50% 50% at center,var(--_g)) calc(var(--s)/2) calc(var(--s)/2) var(--c1);
+    background-size: var(--s) var(--s)
+} */
+
+#preloaded-images {
+   position: absolute;
+   overflow: hidden;
+   left: -9999rem; 
+   top: -9999rem;
+   height: 1px;
+   width: 1px;
+}

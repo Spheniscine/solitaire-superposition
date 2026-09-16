@@ -80,4 +80,8 @@ impl GameState {
         self.already_won = false;
         // LocalStorage.save_game_state(&self);
     }
+
+    pub fn reset_selection(&mut self) {
+        self.board.reset_selection();
+    }
 }
