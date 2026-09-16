@@ -88,6 +88,12 @@ pub fn BoardComponent(
         DepotRole::role(depot) == Some(DepotRole::Superpositor)
     };
 
+    let number_hint = |depot: usize| {
+        if DepotRole::role(depot) == Some(DepotRole::Superpositor) {
+            Some(board.num_splits_remaining as i32)
+        } else {None}
+    };
+
     let selected_height = if let Some(BoardPos { depot_index, card_index }) = board.selected {
         let d = if DepotRole::role(depot_index).unwrap() == DepotRole::Tableau {
             board.depots[depot_index].len() - card_index - 1
@@ -111,6 +117,7 @@ pub fn BoardComponent(
                         width: card_width,
                         hint,
                         dashed: is_dashed(depot),
+                        number_hint: number_hint(depot),
                         onclick: move |_| {
                             onclick.call(BoardPos::new(depot, !0))
                         },

@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use glam::Vec2;
 
-use crate::{components::rem, game::{Card, ColorMode, Skin}};
+use crate::{components::rem, game::{Card, ColorMode, KATEX_SUITS_FONT_STR, Skin}};
 
 pub trait SkinTrait<C>: PartialEq + Clone {
     fn get_color(&self, card: &C, mode: ColorMode) -> String;
@@ -125,11 +125,15 @@ pub fn CardFrame(
     position: Vec2,
     width: f32,
     hint: Option<Element>,
-    #[props(default = CARD_FRAME_DEFAULT_COLOR.to_string())] color: String,
+    #[props(default = CARD_FRAME_DEFAULT_COLOR.to_string())] 
+    color: String,
     onclick: EventHandler<MouseEvent>,
     // oncontextmenu: EventHandler<MouseEvent>,
     #[props(default)] dashed: bool,
+
+    number_hint: Option<i32>,
 ) -> Element {
+    let color = color.as_str();
     let pt = width / 12.;
     let pt = |x: f32| {
         rem(x * pt)
@@ -158,6 +162,25 @@ pub fn CardFrame(
             if let Some(hint) = hint {
                 div {
                     {hint},
+                }
+            }
+
+            if let Some(number_hint) = number_hint {
+                div {
+                    style: "place-items: center;",
+                    position: "absolute",
+                    left: pt(10.),
+                    top: pt(-2.5),
+                    height: "1.2em",
+                    aspect_ratio: 1,
+                    border_radius: "50%",
+                    background_color: color,
+                    color: "#000",
+                    display: "grid",
+                    font_size: "0.75em",
+                    font_family: KATEX_SUITS_FONT_STR,
+
+                    "{number_hint}"
                 }
             }
         }
