@@ -279,7 +279,7 @@ impl GameState {
 
     pub fn check_auto_moves(&mut self) {
         if self.is_busy() { return; }
-        if self.is_over() { self.auto_play = false; return; }
+        if self.is_over() { return; }
         if !self.auto_play { return; }
 
         if let Some(pos) = self.get_next_sort() {
@@ -296,6 +296,7 @@ impl GameState {
         self.board.advance_actions();
 
         if self.is_won() {
+            self.auto_play = false;
             if !self.already_won {
                 self.num_wins += 1;
                 self.already_won = true;
