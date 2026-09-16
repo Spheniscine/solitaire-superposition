@@ -158,7 +158,11 @@ impl GameState {
             },
             DepotRole::Foundation => {
                 if num_moved != 1 { return false; }
-                let ok = depot2.last().is_none_or(|&c| self.can_sort(c, card));
+                let ok = if let Some(&c) = depot2.last() {
+                    self.can_sort(c, card)
+                } else {
+                    1 == card.rank
+                };
                 if !ok { return false; }
                 self.do_move_raw(pos1, pos2);
             },
