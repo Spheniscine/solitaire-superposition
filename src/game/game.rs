@@ -5,7 +5,7 @@ use rand::{Rng, seq::SliceRandom};
 use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 
-use crate::game::{Board, BoardPos, Card, DECK_SIZE, DepotRole, NUM_RANKS, RANKS, Skin, Suit};
+use crate::{components::LocalStorage, game::{Board, BoardPos, Card, DECK_SIZE, DepotRole, NUM_RANKS, RANKS, Skin, Suit}};
 
 pub const ANIMATION_DURATION: Duration = Duration::from_millis(200);
 pub type AnimationKey = u16;
@@ -79,7 +79,7 @@ impl GameState {
         self.history.clear();
         self.undo_stack.clear();
         self.already_won = false;
-        // LocalStorage.save_game_state(&self);
+        LocalStorage.save_game_state(&self);
     }
 
     pub fn reset_selection(&mut self) {
@@ -197,11 +197,11 @@ impl GameState {
             }
             if !overr { self.board.advance_actions(); } // no animation, as repeated card moves on same card causes problems
         }
-        // LocalStorage.save_game_state(&self);
     }
 
     pub fn undo(&mut self) {
         self.undo_with_override(false);
+        LocalStorage.save_game_state(&self);
     }
 
     pub fn onclick(&mut self, pos: BoardPos) {
@@ -250,18 +250,22 @@ impl GameState {
         }).min_by_key(|x| x.0).map(|x| x.1)
     }
 
+    fn try_sort(&mut self, pos: BoardPos) {
+        for dest in DepotRole::Foundation.range() {
+            let dest = self.board.top_pos(dest);
+            if self.move_intent(pos, dest) {
+                return;
+            }
+        }
+    }
+
     pub fn check_auto_moves(&mut self) {
         if self.is_busy() { return; }
         if self.is_over() { return; }
         if !self.auto_play { return; }
 
         if let Some(pos) = self.get_next_sort() {
-            for dest in DepotRole::Foundation.range() {
-                let dest = self.board.top_pos(dest);
-                if self.move_intent(pos, dest) {
-                    return;
-                }
-            }
+            self.try_sort(pos);
         } else {
             self.auto_play = false;
         }
@@ -282,6 +286,15 @@ impl GameState {
             self.check_auto_moves();
         }
 
-        // if !self.is_busy() { LocalStorage.save_game_state(&self); }
+        if !self.is_busy() { LocalStorage.save_game_state(&self); }
+    }
+
+    pub fn restart(&mut self) {
+        if self.history.is_empty() || !self.undo_possible() { return; }
+        self.board = Board::from_deal(&self.deal);
+        self.history.clear();
+        self.undo_stack.clear();
+
+        if !self.is_busy() { LocalStorage.save_game_state(&self); }
     }
 }
