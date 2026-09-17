@@ -1,4 +1,4 @@
-# Farm Solitaire
+# Superposition Solitaire
 
 A web-and-mobile-friendly implementation of Superposition Solitaire (adapted from Tear Solitaire by Hempuli).
 
