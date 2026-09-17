@@ -34,7 +34,7 @@ impl SkinTrait<Card> for Skin {
             span {
                 font_family: KATEX_SUITS_FONT_STR,
 
-                "{card.rank}"
+                {self.ranks.rank_text(card.rank)}
             }
         }
     }

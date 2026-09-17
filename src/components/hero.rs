@@ -2,7 +2,7 @@ use async_std::stream::StreamExt;
 use dioxus::prelude::*;
 use glam::Vec2;
 
-use crate::{components::{BoardComponent, LocalStorage, rem}, game::{ANIMATION_DURATION, AnimationKey, GameState, ScreenState}};
+use crate::{components::{BoardComponent, LocalStorage, Settings, rem}, game::{ANIMATION_DURATION, AnimationKey, GameState, ScreenState}};
 
 #[component]
 pub fn Hero() -> Element {
@@ -69,7 +69,7 @@ pub fn Hero() -> Element {
                     top: rem(1.5),
                     right: rem(2.),
                     class: "game-button",
-                    // onclick: move |_| if clean {state.write().screen_state = ScreenState::Settings;},
+                    onclick: move |_| if clean {state.write().screen_state = ScreenState::Settings;},
                     "Settings"
                 }
 
@@ -111,6 +111,10 @@ pub fn Hero() -> Element {
                     auto_play: st.auto_play,
                     animation_key: st.animation_key,
                     is_won: st.is_won(),
+                }
+            } else if st.screen_state == ScreenState::Settings {
+                Settings { 
+                    game_state: state,
                 }
             }
         }
