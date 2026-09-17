@@ -161,7 +161,9 @@ impl GameState {
                 let ok = if let Some(&c) = depot2.last() {
                     self.can_sort(c, card)
                 } else {
-                    1 == card.rank
+                    1 == card.rank && DepotRole::Foundation.range().all(|d| {
+                        self.board.depots[d].get(0).map(|c| c.suit) != Some(card.suit)
+                    })
                 };
                 if !ok { return false; }
                 self.do_move_raw(pos1, pos2);
